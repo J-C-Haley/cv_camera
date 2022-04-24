@@ -1,0 +1,11 @@
+<launch>
+    <arg name="robot_ns" default="$(optenv ROBOT_NAME robot)" />
+    <arg name="vision_nm" default="camera_manager" doc="name of the nodelet manager" />
+
+    <param name="cv_camera/device_id" value="0" />
+    <!-- <param name="frame_id" value="camera1" /> -->
+    <param name="cv_camera/cv_cap_prop_fourcc" value="Y16 " />
+    <param name="cv_camera/cv_cap_prop_convert_rgb" value="0" />
+    <node pkg="cv_camera" type="cv_camera_node" name="cv_camera_node" output="screen"/>
+
+</launch>

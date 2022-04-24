@@ -1,0 +1,14 @@
+<launch>    
+    <!-- args namespacing  -->
+    <arg name="robot_ns" default="$(optenv ROBOT_NAME robot)" />
+    <arg name="vision_nm" default="camera_manager" doc="name of the nodelet manager" />
+    <!-- <arg name="camera_tf_prefix" default="" /> -->
+
+    <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
+
+    <param name="cv_camera/device_id" value="0" />
+    <param name="cv_camera/cv_cap_prop_fourcc" value="Y16 " />
+    <!-- <param name="cv_camera/cv_cap_prop_format" value="-1"/> -->
+    <node pkg="nodelet" type="nodelet" name="cv_camera" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+
+</launch>

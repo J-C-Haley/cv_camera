@@ -1,0 +1,20 @@
+<launch>    
+    <!-- args namespacing  -->
+    <arg name="robot_ns" default="$(optenv ROBOT_NAME robot)" />
+    <arg name="vision_nm" default="camera_manager" doc="name of the nodelet manager" />
+    <!-- <arg name="camera_tf_prefix" default="" /> -->
+
+    <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
+        
+    <param name="cv_camera_0/device_id" value="0" />
+    <node pkg="nodelet" type="nodelet" name="cv_camera_0" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="cv_camera_1/device_id" value="2" />
+    <node pkg="nodelet" type="nodelet" name="cv_camera_1" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="cv_camera_2/device_id" value="4" />
+    <node pkg="nodelet" type="nodelet" name="cv_camera_2" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="cv_camera_3/device_id" value="6" />
+    <node pkg="nodelet" type="nodelet" name="cv_camera_3" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+
+    <!-- <node pkg="spinnaker_thermal_cam" type="ir_visualization_node" name="ir_visualization_node"/> -->
+
+</launch>
