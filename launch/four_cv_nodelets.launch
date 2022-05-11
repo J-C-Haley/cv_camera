@@ -5,16 +5,20 @@
     <!-- <arg name="camera_tf_prefix" default="" /> -->
 
     <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
-        
-    <param name="cv_camera_0/device_id" value="0" />
-    <node pkg="nodelet" type="nodelet" name="cv_camera_0" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="cv_camera_1/device_id" value="2" />
-    <node pkg="nodelet" type="nodelet" name="cv_camera_1" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="cv_camera_2/device_id" value="4" />
-    <node pkg="nodelet" type="nodelet" name="cv_camera_2" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="cv_camera_3/device_id" value="6" />
-    <node pkg="nodelet" type="nodelet" name="cv_camera_3" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    
+    <param name="~cv_cap_prop_format" value="-1"/>
+    <param name="~cv_cap_prop_convert_rgb" value="0"/>
+    <param name="~pub_vizualization" value="true"/>
 
-    <!-- <node pkg="spinnaker_thermal_cam" type="ir_visualization_node" name="ir_visualization_node"/> -->
+    <param name="ir_0/device_id" value="0" />
+    <node pkg="nodelet" type="nodelet" name="ir_0" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="ir_1/device_id" value="2" />
+    <node pkg="nodelet" type="nodelet" name="ir_1" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="ir_2/device_id" value="4" />
+    <node pkg="nodelet" type="nodelet" name="ir_2" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="ir_3/device_id" value="6" />
+    <node pkg="nodelet" type="nodelet" name="ir_3" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
+    <node name = "four_leptons_dashboard" pkg = "rqt_gui" type = "rqt_gui" respawn = "false" output = "screen" 
+    args = "--perspective-file $(find cv_camera)/rqt/four_leptons.perspective"/>
 </launch>

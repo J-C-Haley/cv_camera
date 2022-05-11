@@ -11,6 +11,8 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/Temperature.h>
+#include <geometry_msgs/Point.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <camera_info_manager/camera_info_manager.h>
 
@@ -131,6 +133,18 @@ public:
   }
 
   /**
+   * @brief accessor of ROS Image viz message.
+   *
+   * you have to call capture() before call this.
+   *
+   * @return message pointer.
+   */
+  inline const sensor_msgs::ImagePtr getImageVizMsgPtr() const
+  {
+    return bridge_viz_.toImageMsg();
+  }
+
+  /**
    * @brief try capture image width
    * @return true if success
    */
@@ -153,6 +167,10 @@ public:
    * @return true if success
    */
   bool setPropertyFromParam(int property_id, const std::string &param_name);
+
+  bool setY16();
+
+  void vizClickCallback(const geometry_msgs::Point& pt);
 
 private:
   /**
@@ -212,6 +230,27 @@ private:
   camera_info_manager::CameraInfoManager info_manager_;
 
   /**
+   * @brief image publisher for visualization
+   */
+  image_transport::CameraPublisher pub_viz_;
+
+  /**
+   * @brief this stores last visualization image
+   */
+  cv_bridge::CvImage bridge_viz_;
+
+  /**
+   * @brief this stores info about visualization image
+   *
+   * currently this has image size (width/height) only.
+   */
+  sensor_msgs::CameraInfo info_viz_;
+
+  std::string clicktopic = topic_name_+"_viz_mouse_left";
+  ros::Subscriber clicksub = node_.subscribe(clicktopic, 10, &Capture::vizClickCallback, this);
+  ros::Publisher pointtemp = node_.advertise<sensor_msgs::Temperature>("Temperature", 100);
+
+  /**
    * @brief rescale_camera_info param value
    */
   bool rescale_camera_info_;
@@ -220,6 +259,14 @@ private:
    * @brief capture_delay param value
    */
   ros::Duration capture_delay_;
+
+  /**
+   * @brief publish_viz_ param value
+   */
+  bool publish_viz_;
+
+  int ptx = 0; 
+  int pty = 0;
 };
 
 } // namespace cv_camera

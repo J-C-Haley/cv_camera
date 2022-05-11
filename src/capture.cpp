@@ -3,6 +3,7 @@
 #include "cv_camera/capture.h"
 #include <sstream>
 #include <string>
+#include <libusb.h>
 
 namespace cv_camera
 {
@@ -18,7 +19,8 @@ Capture::Capture(ros::NodeHandle &node, const std::string &topic_name,
       buffer_size_(buffer_size),
       frame_id_(frame_id),
       info_manager_(node_, camera_name),
-      capture_delay_(ros::Duration(node_.param("capture_delay", 0.0)))
+      capture_delay_(ros::Duration(node_.param("capture_delay", 0.0))),
+      publish_viz_(node_.param("pub_vizualization", true))
 {
 }
 
@@ -86,21 +88,54 @@ void Capture::open(int32_t device_id)
     throw DeviceError(stream.str());
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
+  if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
 
   loadCameraInfo();
 }
 
 void Capture::open(const std::string &device_path)
 {
+  // TODO: open lepton by serial number or VID/PID for persistent naming
+  // struct usb_bus *bus;
+  // struct usb_device *dev;
+  // libusb_open_device_with_vid_pid();
+  // libusb_get_device_address();
+  // libusb_get_device_list();
+  
+  
+  // usb_init();
+  // usb_find_busses();
+  // usb_find_devices();
+  // for (bus = usb_busses; bus; bus = bus->next)
+  //     for (dev = bus->devices; dev; dev = dev->next){
+  //         printf("Trying device %s/%s\n", bus->dirname, dev->filename);
+  //         printf("\tID_VENDOR = 0x%04x\n", dev->descriptor.idVendor);
+  //         printf("\tID_PRODUCT = 0x%04x\n", dev->descriptor.idProduct);
+  //     }
+
   cap_.open(device_path, cv::CAP_V4L2);
   if (!cap_.isOpened())
   {
     throw DeviceError("device_path " + device_path + " cannot be opened");
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
+  if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
 
   loadCameraInfo();
 }
+
+// void Capture::open(const std::string &device_path)
+// {
+//   cap_.open(device_path, cv::CAP_V4L2);
+//   if (!cap_.isOpened())
+//   {
+//     throw DeviceError("device_path " + device_path + " cannot be opened");
+//   }
+//   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
+//   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
+
+//   loadCameraInfo();
+// }
 
 void Capture::open()
 {
@@ -117,6 +152,7 @@ void Capture::openFile(const std::string &file_path)
     throw DeviceError(stream.str());
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
+  if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
 
   std::string url;
   if (node_.getParam("camera_info_url", url))
@@ -132,8 +168,17 @@ bool Capture::capture()
 {
   if (cap_.read(bridge_.image))
   {
+    // Trim off lepton metadata
+    int cropheight = bridge_.image.size().height - 2;
+    int cropwidth = bridge_.image.size().width;
+    bridge_.image = bridge_.image(cv::Range(0,cropheight),cv::Range(0,cropwidth));
+
+    // cv::imwrite("/home/jch/Pictures/testim.tif", bridge_.image);
+
+    // Construct header
     ros::Time stamp = ros::Time::now() - capture_delay_;
-    bridge_.encoding = bridge_.image.channels() == 3 ? enc::BGR8 : enc::MONO8;
+    // bridge_.encoding = bridge_.image.channels() == 3 ? enc::BGR8 : enc::MONO8;
+    bridge_.encoding = enc::MONO16;
     bridge_.header.stamp = stamp;
     bridge_.header.frame_id = frame_id_;
 
@@ -162,6 +207,38 @@ bool Capture::capture()
     }
     info_.header.stamp = stamp;
     info_.header.frame_id = frame_id_;
+    
+    if (publish_viz_)
+    {
+      // Make a pretty image
+      cv_bridge::CvImage tmp_;
+      cv::normalize(bridge_.image, tmp_.image, 0, 65535, cv::NORM_MINMAX);
+      tmp_.image.convertTo(tmp_.image,CV_8UC1,1/255.0); //CV_32F
+      cv::applyColorMap(tmp_.image, bridge_viz_.image, cv::COLORMAP_HOT);
+
+      bridge_viz_.encoding = enc::BGR8;
+      bridge_viz_.header.stamp = stamp;
+      bridge_viz_.header.frame_id = frame_id_;
+      
+      info_viz_ = info_;
+
+      // Publish temperature at picked point
+      int16_t temp_mk = bridge_.image.at<int16_t>(pty,ptx);
+      sensor_msgs::Temperature tempmsg;
+      tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 271.15;
+      tempmsg.header.stamp = stamp;
+      pointtemp.publish(tempmsg);
+
+      // Draw crosshair
+      // cv::line(bridge_viz_.image, cv::Point(ptx - 2, pty), cv::Point(ptx + 2, pty), (0,255,0), 1);
+      // cv::line(bridge_viz_.image, cv::Point(ptx, pty - 2), cv::Point(ptx, pty + 2), (0,255,0), 1);
+      cv::line(bridge_viz_.image, cv::Point(ptx - 5, pty), cv::Point(ptx - 2, pty), cvScalar(117,79,142), 1);
+      cv::line(bridge_viz_.image, cv::Point(ptx + 5, pty), cv::Point(ptx + 2, pty), cvScalar(117,79,142), 1);
+      cv::line(bridge_viz_.image, cv::Point(ptx, pty - 5), cv::Point(ptx, pty - 2), cvScalar(117,79,142), 1);
+      cv::line(bridge_viz_.image, cv::Point(ptx, pty + 5), cv::Point(ptx, pty + 2), cvScalar(117,79,142), 1);
+
+    }
+    ros::spinOnce();
 
     return true;
   }
@@ -171,6 +248,9 @@ bool Capture::capture()
 void Capture::publish()
 {
   pub_.publish(*getImageMsgPtr(), info_);
+  if(publish_viz_){
+    pub_viz_.publish(*getImageVizMsgPtr(), info_viz_);
+  }
 }
 
 bool Capture::setPropertyFromParam(int property_id, const std::string &param_name)
@@ -185,6 +265,24 @@ bool Capture::setPropertyFromParam(int property_id, const std::string &param_nam
     }
   }
   return true;
+}
+
+bool Capture::setY16()
+{
+  if (cap_.isOpened())
+  {
+    double yval = cv::VideoWriter::fourcc('Y','1','6',' ');
+    ROS_INFO("setting property Y16 = %lf", yval);
+    cap_.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('Y','1','6',' '));
+  }
+  return true;
+}
+
+void Capture::vizClickCallback(const geometry_msgs::Point& pt)
+{
+  ROS_INFO("Monitoring point temperature at: (%f,%f)",pt.x,pt.y);
+  ptx = static_cast<int>(pt.x);
+  pty = static_cast<int>(pt.y);
 }
 
 } // namespace cv_camera

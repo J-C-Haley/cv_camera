@@ -7,8 +7,9 @@
     <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
 
     <param name="cv_camera/device_id" value="0" />
-    <param name="cv_camera/cv_cap_prop_fourcc" value="Y16 " />
-    <!-- <param name="cv_camera/cv_cap_prop_format" value="-1"/> -->
+    <param name="cv_camera/cv_cap_prop_format" value="-1"/>
+    <param name="cv_camera/cv_cap_prop_convert_rgb" value="0"/>
+    <param name="cv_camera/pub_vizualization" value="true"/>
     <node pkg="nodelet" type="nodelet" name="cv_camera" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
 </launch>
