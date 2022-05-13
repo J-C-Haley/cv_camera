@@ -65,7 +65,7 @@
                   "type": "repr"
                 },
                 "mouse_pub_topic": {
-                  "repr": "'/ir_0/image_raw_viz_mouse_left'",
+                  "repr": "'/ir0/image_raw_viz_mouse_left'",
                   "type": "repr"
                 },
                 "num_gridlines": {
@@ -89,7 +89,7 @@
                   "type": "repr"
                 },
                 "topic": {
-                  "repr": "'/ir_0/image_raw_viz'",
+                  "repr": "'/ir0/image_raw_viz'",
                   "type": "repr"
                 },
                 "zoom1": {
@@ -132,7 +132,7 @@
                   "type": "repr"
                 },
                 "mouse_pub_topic": {
-                  "repr": "'/ir_1/image_raw_viz_mouse_left'",
+                  "repr": "'/ir1/image_raw_viz_mouse_left'",
                   "type": "repr"
                 },
                 "num_gridlines": {
@@ -156,7 +156,7 @@
                   "type": "repr"
                 },
                 "topic": {
-                  "repr": "'/ir_1/image_raw_viz'",
+                  "repr": "'/ir1/image_raw_viz'",
                   "type": "repr"
                 },
                 "zoom1": {
@@ -199,7 +199,7 @@
                   "type": "repr"
                 },
                 "mouse_pub_topic": {
-                  "repr": "'/ir_2/image_raw_viz_mouse_left'",
+                  "repr": "'/ir2/image_raw_viz_mouse_left'",
                   "type": "repr"
                 },
                 "num_gridlines": {
@@ -223,7 +223,7 @@
                   "type": "repr"
                 },
                 "topic": {
-                  "repr": "'/ir_2/image_raw_viz'",
+                  "repr": "'/ir2/image_raw_viz'",
                   "type": "repr"
                 },
                 "zoom1": {
@@ -266,7 +266,7 @@
                   "type": "repr"
                 },
                 "mouse_pub_topic": {
-                  "repr": "'/ir_3/image_raw_viz_mouse_left'",
+                  "repr": "'/ir3/image_raw_viz_mouse_left'",
                   "type": "repr"
                 },
                 "num_gridlines": {
@@ -290,7 +290,7 @@
                   "type": "repr"
                 },
                 "topic": {
-                  "repr": "'/ir_3/image_raw_viz'",
+                  "repr": "'/ir3/image_raw_viz'",
                   "type": "repr"
                 },
                 "zoom1": {
@@ -333,11 +333,11 @@
                   "type": "repr"
                 },
                 "topics": {
-                  "repr": "['/ir_0/Temperature/temperature', '/ir_1/Temperature/temperature', '/ir_2/Temperature/temperature', '/ir_3/Temperature/temperature']",
+                  "repr": "['/ir0/Temperature/temperature', '/ir1/Temperature/temperature', '/ir2/Temperature/temperature', '/ir3/Temperature/temperature']",
                   "type": "repr"
                 },
                 "x_limits": {
-                  "repr": "[-263.47991371154785, 36.52008628845215]",
+                  "repr": "[0.7357392311096191, 60.73573923110962]",
                   "type": "repr"
                 },
                 "y_limits": {
@@ -372,9 +372,9 @@
             "plugin": {
               "keys": {
                 "tree_widget_header_state": {
-                  "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff000000000000000100000000000000000100000000000000000000000000000000000008590000000501010001000000000000000005000000c8ffffffff000000810000000300000005000004440000000100000003000002140000000100000003000000cb00000001000000030000006e0000000100000003000000c80000000100000003000003e800000000c8')",
+                  "repr(QByteArray.hex)": "QtCore.QByteArray(b'000000ff000000000000000100000000000000000100000000000000000000000000000000000007a00000000501010001000000000000000005000000c8ffffffff0000008100000003000000050000038b0000000100000003000002140000000100000003000000cb00000001000000030000006e0000000100000003000000c80000000100000003000003e800000000c8')",
                   "type": "repr(QByteArray.hex)",
-                  "pretty-print": "                                        D                 n              "
+                  "pretty-print": "                                                          n              "
                 }
               },
               "groups": {}

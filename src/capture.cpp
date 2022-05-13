@@ -3,7 +3,6 @@
 #include "cv_camera/capture.h"
 #include <sstream>
 #include <string>
-#include <libusb.h>
 
 namespace cv_camera
 {

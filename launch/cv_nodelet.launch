@@ -1,15 +1,15 @@
 <launch>    
-    <!-- args namespacing  -->
-    <arg name="robot_ns" default="$(optenv ROBOT_NAME robot)" />
-    <arg name="vision_nm" default="camera_manager" doc="name of the nodelet manager" />
-    <!-- <arg name="camera_tf_prefix" default="" /> -->
+    <arg name="vision_nm" default="ir_cam_manager" doc="name of the nodelet manager" />
 
     <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
 
-    <param name="cv_camera/device_id" value="0" />
-    <param name="cv_camera/cv_cap_prop_format" value="-1"/>
-    <param name="cv_camera/cv_cap_prop_convert_rgb" value="0"/>
-    <param name="cv_camera/pub_vizualization" value="true"/>
+    <param name="~frame_id" value="ir_0" />
+    <param name="~device_id" value="0" />
+    <param name="~cv_cap_prop_format" value="-1"/>
+    <param name="~cv_cap_prop_convert_rgb" value="0"/>
+    <param name="~pub_vizualization" value="true"/>
     <node pkg="nodelet" type="nodelet" name="cv_camera" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
+    <node name = "four_leptons_dashboard" pkg = "rqt_gui" type = "rqt_gui" respawn = "false" output = "screen" 
+    args = "--perspective-file $(find cv_camera)/rqt/four_leptons.perspective"/>
 </launch>

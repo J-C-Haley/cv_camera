@@ -1,11 +1,10 @@
-ROS OpenCV camera driver
+ROS FLIR Lepton camera driver
 ========================
 
-It is very easy to capture video device if we use `cv::VideoCapture` of OpenCV.
+A driver to interface FLIR Lepton thermal cameras using the PureThermal boards over USB, radiometrically.
 
-If you are searching ROS2 driver, check [here](https://github.com/Kapernikov/cv_camera)
+This builds on the OTL/cv_camera driver, with customization for thermal camera peculiarities.
 
-cv_camera_node
 ------------------
 
 This node uses [camera_info_manager](http://wiki.ros.org/camera_info_manager) for dealing with camera_info.
@@ -22,9 +21,10 @@ If no calibration data is set, it has dummy values except for width and height.
 
 ### Parameters
 
-* `~rate` (*double*, default: 30.0) – publish rate [Hz].
-* `~device_id` (*int*, default: 0) – capture device id.
+* `~rate` (*double*, default: 9.0) – publish rate [Hz].
+* `~device_id` (*int*, default: 0) – capture device id. Leptons register two devices each, use the first (0, 2, 4...)
 * `~device_path` (*string*, default: "") – path to camera device file, e. g. `/dev/video0`.
+<!-- TODO: change device_path to use serial number -->
 * `~frame_id` (*string*, default: "camera") – `frame_id` of message header.
 * `~image_width` (*int*) – try to set capture image width.
 * `~image_height` (*int*) – try to set capture image height.
@@ -34,7 +34,7 @@ If no calibration data is set, it has dummy values except for width and height.
 * `~rescale_camera_info` (*bool*, default: false) – rescale camera calibration info automatically.
 * `~camera_name` (*bool*, default: same as `frame_id`) – camera name for `camera_info_manager`.
 
-Supports CV_CAP_PROP_*, by below params.
+Supports CV_CAP_PROP_*, by below params; however, most are irrelevant to the FLIR Lepton. See example launch files.
 
 * `~cv_cap_prop_pos_msec` (*double*)
 * `~cv_cap_prop_pos_avi_ratio` (*double*)
@@ -78,6 +78,7 @@ Contributors
 
 PR is welcome. I'll review your code to keep consistency, be patient.
 
+* James Haley (Lepton adaptation)
 * Oleg Kalachev
 * Mikael Arguedas
 * Maurice Meedendorp

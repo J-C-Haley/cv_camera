@@ -1,0 +1,20 @@
+image_width: 160
+image_height: 120
+camera_name: ir1
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1475.962599743764, 0, 344.0355888078813, 0, 1485.657576113243, 197.6821794846574, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.003472456772169354, -0.3232598113988226, 0.001908341548726065, 0.008401460095714469, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [1472.199584960938, 0, 345.4556485394314, 0, 0, 1486.0966796875, 197.5131654346915, 0, 0, 0, 1, 0]

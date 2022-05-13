@@ -1,8 +1,5 @@
 <launch>    
-    <!-- args namespacing  -->
-    <arg name="robot_ns" default="$(optenv ROBOT_NAME robot)" />
-    <arg name="vision_nm" default="camera_manager" doc="name of the nodelet manager" />
-    <!-- <arg name="camera_tf_prefix" default="" /> -->
+    <arg name="vision_nm" default="ircam_manager" doc="name of the nodelet manager" />
 
     <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
     
@@ -10,14 +7,25 @@
     <param name="~cv_cap_prop_convert_rgb" value="0"/>
     <param name="~pub_vizualization" value="true"/>
 
-    <param name="ir_0/device_id" value="0" />
-    <node pkg="nodelet" type="nodelet" name="ir_0" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="ir_1/device_id" value="2" />
-    <node pkg="nodelet" type="nodelet" name="ir_1" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="ir_2/device_id" value="4" />
-    <node pkg="nodelet" type="nodelet" name="ir_2" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
-    <param name="ir_3/device_id" value="6" />
-    <node pkg="nodelet" type="nodelet" name="ir_3" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    <param name="ir0/frame_id" value="ir0" />
+    <param name="ir0/device_id" value="0" />
+    <param name="~camera_info_url" value="package://cv_camera/cal/ir0.yaml"/>
+    <node pkg="nodelet" type="nodelet" name="ir0" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+
+    <param name="ir1/frame_id" value="ir1" />
+    <param name="ir1/device_id" value="2" />
+    <param name="~camera_info_url" value="package://cv_camera/cal/ir1.yaml"/>
+    <node pkg="nodelet" type="nodelet" name="ir1" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+
+    <param name="ir2/frame_id" value="ir2" />
+    <param name="ir2/device_id" value="4" />
+    <param name="~camera_info_url" value="package://cv_camera/cal/ir2.yaml"/>
+    <node pkg="nodelet" type="nodelet" name="ir2" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
+    
+    <param name="ir3/frame_id" value="ir3" />
+    <param name="ir3/device_id" value="6" />
+    <param name="~camera_info_url" value="package://cv_camera/cal/ir3.yaml"/>
+    <node pkg="nodelet" type="nodelet" name="ir3" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
     <node name = "four_leptons_dashboard" pkg = "rqt_gui" type = "rqt_gui" respawn = "false" output = "screen" 
     args = "--perspective-file $(find cv_camera)/rqt/four_leptons.perspective"/>
