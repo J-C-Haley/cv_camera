@@ -116,7 +116,6 @@ void Capture::open(const std::string &device_path)
     std::smatch m; 
     if(std::regex_search(current_line, m, std::regex("N: video(\\d+)"))){
       device_num = m[1].str();
-      printf("Dev num %s\n", device_num.c_str());
     }
 
     std::smatch mm; 
