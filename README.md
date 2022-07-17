@@ -101,3 +101,6 @@ Forked repo authors:
 * Maurice Meedendorp
 * Max Schettler
 * Lukas Bulwahn
+
+To build for debugging with vs code:
+catkin build cv_camera -DCMAKE_BUILD_TYPE=RelWithDebInfo
