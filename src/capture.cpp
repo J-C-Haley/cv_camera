@@ -4,6 +4,17 @@
 #include <sstream>
 #include <string>
 
+// #include <iostream>
+// #include <fstream>
+// #include <libusb-1.0/libusb.h>
+
+// #include <cstdio>
+// #include <memory>
+// #include <stdexcept>
+// #include <array>
+
+#include <regex>
+
 namespace cv_camera
 {
 
@@ -94,6 +105,233 @@ void Capture::open(int32_t device_id)
 
 void Capture::open(const std::string &device_path)
 {
+  // Search USB devices for matching serial number using udevadm output
+  std::array<char, 128> buffer;
+  std::string result;
+  int device_open_id;
+
+  for(int i = 0; i < 100; i++){
+  // const char* is = std::to_string(i);
+  std::string cmdstr = std::string("udevadm info --name=/dev/video") + std::to_string(i);
+  const char* cmd = cmdstr.c_str();
+  // const char* cmd = ("udevadm info --name=/dev/video" + std::to_string(i));
+  std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+  if (!pipe) throw std::runtime_error("popen() failed!");
+  while (!feof(pipe.get())) {
+      if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+          result += buffer.data();
+  }
+  bool bus_dev_found = false;
+  std::string current_line, device_num, device_open_path;
+  std::istringstream lsusboutut{result};
+
+  while (std::getline(lsusboutut, current_line))
+  {
+    std::smatch m; 
+    if(std::regex_search(current_line, m, std::regex("N: video(\\d+)"))){
+      device_num = m[1].str();
+      printf("%s\n", device_num.c_str());
+    }
+    std::smatch mm; 
+    if(std::regex_search(current_line, mm, std::regex(device_path.c_str()))){
+      device_open_id = std::stoi(device_num);
+      printf("Found device with matching serial number: /dev/video%s, %s\n", device_num.c_str(), device_path.c_str());
+      break;
+    }
+     
+  } 
+  // TODO: this doesn't check if multiple devices match the serial, just uses the last
+  }
+
+  // using lsusb output
+  // std::array<char, 128> buffer;
+  // std::string result;
+  // const char* cmd = "lsusb -v -d 1e4e:0100";
+  // std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+  // if (!pipe) throw std::runtime_error("popen() failed!");
+  // while (!feof(pipe.get())) {
+  //     if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+  //         result += buffer.data();
+  // }
+  // // printf(result.c_str());
+  // // search for iSerial
+  // bool bus_dev_found = false;
+  // std::string current_line, bus, dev, device_open_path;
+  // // std::ifstream lsusboutut (result.c_str());
+  // std::istringstream lsusboutut{result};
+
+  // printf(device_path.c_str());
+
+  // while (std::getline(lsusboutut, current_line))
+  // {
+  //   std::smatch m; 
+  //   if(std::regex_search(current_line, m, std::regex("Bus (\\d+) Device (\\d+): ID 1e4e:0100 Cubeternet WebCam"))){
+  //     bus = m[1].str();
+  //     dev = m[2].str();
+  //     printf(bus.c_str());
+  //     printf("   ");
+  //     printf(dev.c_str());
+  //     printf("\n");
+  //   }
+  //   std::smatch mm; 
+  //   if(std::regex_search(current_line, mm, std::regex(device_path.c_str()))){
+  //     printf("FOUND DEVICE PATH MATCH:\n");
+  //     device_open_path = ("/dev/bus/usb/"+ bus+"/"+ dev);
+  //     printf(device_open_path.c_str());
+  //     printf("\n");
+  //     break;
+  //   }
+     
+  // }
+
+
+  
+
+
+
+  ////////////////////////////////////////// libusb way, needs to open devices to read sn???
+  // libusb_context *context = NULL;
+  // libusb_device **list = NULL;
+  // int rc = 0;
+  // int rcs = 0;
+  // ssize_t count = 0;
+
+  // rc = libusb_init(&context);
+  // assert(rc == 0);
+
+  // count = libusb_get_device_list(context, &list);
+  // assert(count > 0);
+
+  // for (size_t idx = 0; idx < count; ++idx) {
+  //     libusb_device *device = list[idx];
+  //     libusb_device_descriptor desc = {0};
+  //     libusb_device_handle *handle;
+  //     int status = 0;
+  //     // libusb_string_descriptor stdesc = {0};
+
+  //     rc = libusb_get_device_descriptor(device, &desc);
+  //     assert(rc == 0);
+
+  //     status = libusb_open(device, &handle);
+  //     if (status < 0) {
+  //       // usbi_err("could not open device, error %d", status);
+  //       printf("err");
+  //       free(handle);
+  //       // return NULL;
+  //       continue;
+  //     }
+
+
+  //     unsigned char *data; 
+  //     int length;
+
+  //     rcs = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber, data, length);
+  //     // assert(rcs == 0);
+
+  //     printf("Vendor:Device = %04x:%04x\n", desc.idVendor, desc.idProduct);
+  //     printf("iSerialNumber = %x\n", desc.iSerialNumber);
+  //     // printf("Serial = %s\n", data);
+
+
+  //     // printf("Serial = %s\n", device->getString(desc.iSerialNumber));
+  //     // libusb_get_string_descriptor_ascii(device, desc.iSerialNumber);
+  //     // printf("Serial = %s\n", stdesc));
+  // }
+  ////////////////////////////////////////////////////////////////
+  
+  // struct usb_bus *bus;
+  // struct usb_device *dev;
+  // usb_init();
+  // usb_find_busses();
+  // usb_find_devices();
+  // for (bus = usb_busses; bus; bus = bus->next)
+  //     for (dev = bus->devices; dev; dev = dev->next){
+  //         printf("Trying device %s/%s\n", bus->dirname, dev->filename);
+  //         printf("\tID_VENDOR = 0x%04x\n", dev->descriptor.idVendor);
+  //         printf("\tID_PRODUCT = 0x%04x\n", dev->descriptor.idProduct);
+  //         printf("\tID_SERIAL = %s\n", dev->descriptor.iSerial);
+  //     }
+
+
+
+
+
+  // try
+  //   {
+  //       std::ifstream file_input;
+  //       std::size_t pos;
+  //       std::string device_path, current_line, search_str, event_str;
+  //       std::string device_list_file = "/proc/bus/input/devices";
+  //       bool vid_pid_found = false;
+  //       int fd = 0;
+  //       bool debug = true;
+
+  //       // 1. open device list file
+  //       file_input.open(device_list_file.c_str());
+  //       if (!file_input.is_open())
+  //       {
+  //           std::cerr << "file_input.open >> " << std::strerror(errno) << std::endl;
+  //           throw -2;
+  //       }
+
+  //       // 2. search for first VID:PID and get event number
+  //       search_str = "Vendor=" + device_vid + " Product=" + device_pid;
+  //       while (getline(file_input, current_line))
+  //       {
+  //           if (!vid_pid_found)
+  //           {
+  //               pos = current_line.find(search_str, 0);
+  //               if (pos != std::string::npos)
+  //               {
+  //                   vid_pid_found = true;
+  //                   search_str = "event";
+  //               }               
+  //           }
+  //           else
+  //           {
+  //               pos = current_line.find(search_str, 0);
+  //               if (pos != std::string::npos)
+  //               {
+  //                   event_str = current_line.substr(pos);
+  //                   // find space and substring event##
+  //                   pos = event_str.find(' ', 0);
+  //                   event_str = event_str.substr(0, pos);
+  //                   break;
+  //               }
+  //           }
+  //       }
+
+  //       // 3.  build device path
+  //       device_path = "/dev/input/" + event_str;
+  //       if (debug) std::cout << "device_path = " << device_path << std::endl;   
+
+  //       // 4.  connect to device
+  //       fd = open (device_path.c_str(), O_RDONLY);
+  //       if (fd < 0)
+  //       {
+  //           std::cerr << "open >> errno = " << std::strerror(errno) << std::endl;       
+  //           throw -3;
+  //       }
+  //   }
+  //   catch (const std::exception &e)
+  //   {
+  //       std::cerr << "e.what() = " << e.what() << std::endl;
+  //       throw -1;
+  //   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // TODO: open lepton by serial number or VID/PID for persistent naming
   // struct usb_bus *bus;
   // struct usb_device *dev;
@@ -112,10 +350,10 @@ void Capture::open(const std::string &device_path)
   //         printf("\tID_PRODUCT = 0x%04x\n", dev->descriptor.idProduct);
   //     }
 
-  cap_.open(device_path, cv::CAP_V4L2);
+  cap_.open(device_open_id, cv::CAP_V4L2);
   if (!cap_.isOpened())
   {
-    throw DeviceError("device_path " + device_path + " cannot be opened");
+    throw DeviceError("device_path cannot be opened");
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}

@@ -1,15 +1,15 @@
 image_width: 160
 image_height: 120
-camera_name: ir1
+camera_name: ir5
 camera_matrix:
   rows: 3
   cols: 3
-  data: [200, 0, 80, 0, 200, 60, 0, 0, 1]
+  data: [150, 0, 80, 0, 150, 60, 0, 0, 1]
 distortion_model: plumb_bob
 distortion_coefficients:
   rows: 1
   cols: 5
-  data: [0.003472456772169354, -0.3232598113988226, 0.001908341548726065, 0.008401460095714469, 0]
+  data: [0,0,0,0, 0]
 rectification_matrix:
   rows: 3
   cols: 3
@@ -17,4 +17,4 @@ rectification_matrix:
 projection_matrix:
   rows: 3
   cols: 4
-  data: [200, 0, 80, 0, 0, 200, 60, 0, 0, 0, 1, 0]
+  data: [150, 0, 80, 0, 0, 150, 60, 0, 0, 0, 1, 0]

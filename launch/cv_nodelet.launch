@@ -4,12 +4,15 @@
     <node pkg="nodelet" type="nodelet" name="$(arg vision_nm)" args="manager" output="screen"/>
 
     <param name="~frame_id" value="ir_0" />
-    <param name="~device_id" value="0" />
+    <!-- <param name="~device_id" value="0" /> -->
+    <param name="~device_path" value="801c0030-5112-3039-3433-373300000000" />
     <param name="~cv_cap_prop_format" value="-1"/>
     <param name="~cv_cap_prop_convert_rgb" value="0"/>
     <param name="~pub_vizualization" value="true"/>
     <node pkg="nodelet" type="nodelet" name="cv_camera" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
+    <?ignore
     <node name = "four_leptons_dashboard" pkg = "rqt_gui" type = "rqt_gui" respawn = "false" output = "screen" 
     args = "--perspective-file $(find cv_camera)/rqt/four_leptons.perspective"/>
+    ?>
 </launch>

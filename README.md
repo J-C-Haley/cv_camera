@@ -10,6 +10,20 @@ This builds on the OTL/cv_camera driver, with customization for thermal camera p
 This node uses [camera_info_manager](http://wiki.ros.org/camera_info_manager) for dealing with camera_info.
 If no calibration data is set, it has dummy values except for width and height.
 
+### Installation and Setup
+
+Currently this repo is source-only, only tested on Noetic & Ubuntu.
+
+For first-time set up of udev rules for the lepton, run the following and reboot:
+
+'''sudo sh -c "echo 'SUBSYSTEMS==\"usb\", ATTRS{idVendor}==\"1e4e\", ATTRS{idProduct}==\"0100\", SYMLINK+=\"pt1\", GROUP=\"usb\", MODE=\"666\"' > /etc/udev/rules.d/99-pt1.rules"'''
+
+Often it's preferrable to use the serial of a camera to ensure consistent ordering & calibration. To set up the driver to use SN#, plug each camera in in the order required, (ensuring no other USB cameras are plugged in with 'ls /dev/video*') and run the following command: 
+
+'''udevadm info --name=/dev/video1 | grep 'E: ID_SERIAL_SHORT=''''
+
+Then copy the whole SN# into the launch file param "~device_path". If you do not see a number, check your udev rules as well as permissions on the device.
+
 ### Publish
 
 * `~image_raw` (*sensor_msgs/Image*)
@@ -78,7 +92,10 @@ Contributors
 
 PR is welcome. I'll review your code to keep consistency, be patient.
 
-* James Haley (Lepton adaptation)
+* James Haley
+
+Forked repo authors: 
+
 * Oleg Kalachev
 * Mikael Arguedas
 * Maurice Meedendorp
