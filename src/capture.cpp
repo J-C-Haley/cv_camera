@@ -93,7 +93,7 @@ void Capture::open(int32_t device_id)
   loadCameraInfo();
 }
 
-void Capture::open(const std::string &device_path)
+void Capture::open(const std::string &device_sn)
 {
   // Search USB devices for matching serial number using udevadm output
   std::array<char, 128> buffer;
@@ -119,19 +119,19 @@ void Capture::open(const std::string &device_path)
     }
 
     std::smatch mm; 
-    if(std::regex_search(current_line, mm, std::regex(device_path.c_str()))){
+    if(std::regex_search(current_line, mm, std::regex(device_sn.c_str()))){
       device_open_id = std::stoi(device_num);
       break;
     }
   }
   // TODO: this doesn't check if multiple devices match the serial, just uses the last
   }
-  ROS_INFO("Found device with matching serial number: /dev/video%s, %s\n", device_num.c_str(), device_path.c_str());
+  ROS_INFO("Found device with matching serial number: /dev/video%s, %s\n", device_num.c_str(), device_sn.c_str());
   
   cap_.open(device_open_id, cv::CAP_V4L2);
   if (!cap_.isOpened())
   {
-    throw DeviceError("device_path cannot be opened");
+    throw DeviceError("device_sn cannot be opened");
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
