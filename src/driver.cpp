@@ -22,10 +22,27 @@ void Driver::setup()
 {
   double hz(DEFAULT_RATE);
   int32_t device_id(0);
-  std::string device_sn("");
+  // std::string device_sn(""); anil
+  std::string device_path("");
   std::string frame_id("camera");
   std::string file_path("");
   std::string camera_name("");
+
+  while(true)
+  {
+    ROS_INFO("Trying to get device_id parameter");
+    bool ir_ready = private_node_.hasParam("device_id");
+
+    if(ir_ready)
+    {
+      break;
+    }
+    else {
+      ROS_INFO("device_id parameter not ready yet, trying again");
+    }
+
+    ros::Duration(0.2).sleep();
+  }
 
   private_node_.getParam("device_id", device_id);
   private_node_.getParam("frame_id", frame_id);
@@ -48,9 +65,13 @@ void Driver::setup()
   {
     camera_->openFile(file_path);
   }
-  else if (private_node_.getParam("device_sn", device_sn) && device_sn != "")
+  // else if (private_node_.getParam("device_sn", device_sn) && device_sn != "")
+  // {
+  //   camera_->open(device_sn);
+  // }
+  else if (private_node_.getParam("device_path", device_path) && device_path != "")
   {
-    camera_->open(device_sn);
+    camera_->open(device_path);
   }
   else
   {

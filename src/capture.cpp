@@ -93,46 +93,56 @@ void Capture::open(int32_t device_id)
   loadCameraInfo();
 }
 
-void Capture::open(const std::string &device_sn)
+// void Capture::open(const std::string &device_sn) anil
+void Capture::open(const std::string &device_path)
 {
-  // Search USB devices for matching serial number using udevadm output
-  std::array<char, 128> buffer;
-  int device_open_id;
-  std::string result, current_line, device_num;
+  // anil - the whole block below was commented out until next anil
+  // // Search USB devices for matching serial number using udevadm output
+  // std::array<char, 128> buffer;
+  // int device_open_id;
+  // std::string result, current_line, device_num;
 
-  for(int i = 0; i < 100; i++){
-  std::string cmdstr = std::string("udevadm info --name=/dev/video") + std::to_string(i);
-  const char* cmd = cmdstr.c_str();
-  std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-  if (!pipe) throw std::runtime_error("popen() failed!");
-  while (!feof(pipe.get())) {
-      if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
-          result += buffer.data();
-  }
-  std::istringstream lsusboutut{result};
+  // for(int i = 0; i < 100; i++){
+  // std::string cmdstr = std::string("udevadm info --name=/dev/video") + std::to_string(i);
+  // const char* cmd = cmdstr.c_str();
+  // std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+  // if (!pipe) throw std::runtime_error("popen() failed!");
+  // while (!feof(pipe.get())) {
+  //     if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+  //         result += buffer.data();
+  // }
+  // std::istringstream lsusboutut{result};
 
-  while (std::getline(lsusboutut, current_line))
-  {
-    std::smatch m; 
-    if(std::regex_search(current_line, m, std::regex("N: video(\\d+)"))){
-      device_num = m[1].str();
-    }
+  // while (std::getline(lsusboutut, current_line))
+  // {
+  //   std::smatch m; 
+  //   if(std::regex_search(current_line, m, std::regex("N: video(\\d+)"))){
+  //     device_num = m[1].str();
+  //   }
 
-    std::smatch mm; 
-    if(std::regex_search(current_line, mm, std::regex(device_sn.c_str()))){
-      device_open_id = std::stoi(device_num);
-      break;
-    }
-  }
-  // TODO: this doesn't check if multiple devices match the serial, just uses the last
-  }
-  ROS_INFO("Found device with matching serial number: /dev/video%s, %s\n", device_num.c_str(), device_sn.c_str());
+  //   std::smatch mm; 
+  //   if(std::regex_search(current_line, mm, std::regex(device_sn.c_str()))){
+  //     device_open_id = std::stoi(device_num);
+  //     break;
+  //   }
+  // }
+  // // TODO: this doesn't check if multiple devices match the serial, just uses the last
+  // }
+  // ROS_INFO("Found device with matching serial number: /dev/video%s, %s\n", device_num.c_str(), device_sn.c_str());
   
-  cap_.open(device_open_id, cv::CAP_V4L2);
+  // cap_.open(device_open_id, cv::CAP_V4L2);
+  // if (!cap_.isOpened())
+  // {
+  //   throw DeviceError("device_sn cannot be opened");
+  // }
+  // anil
+  
+  cap_.open(device_path, cv::CAP_V4L2);
   if (!cap_.isOpened())
   {
-    throw DeviceError("device_sn cannot be opened");
+    throw DeviceError("device path " + device_path + " cannot be opened");
   }
+
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
 

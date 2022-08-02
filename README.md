@@ -93,6 +93,7 @@ Contributors
 PR is welcome. I'll review your code to keep consistency, be patient.
 
 * James Haley
+* Anil Kircaliali
 
 Forked repo authors: 
 

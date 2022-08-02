@@ -59,7 +59,8 @@ public:
    * @param device_sn path of the camera device
    * @throw cv_camera::DeviceError device open failed
    */
-  void open(const std::string &device_snh);
+  // void open(const std::string &device_snh);  anil
+  void open(const std::string &device_path);
 
   /**
    * @brief Load camera info from file.

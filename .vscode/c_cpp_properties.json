@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/composites/dev/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/composites/dev/catkin_ws/src/bio_ik/include/**",
+        "/home/composites/dev/catkin_ws/src/cv_camera/include/**",
+        "/home/composites/dev/catkin_ws/src/orbital_ros/descartes_combined/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_core/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_moveit/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_planner/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_tests/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_trajectory/include/**",
+        "/home/composites/dev/catkin_ws/src/descartes/descartes_utilities/include/**",
+        "/home/composites/dev/catkin_ws/src/kuka_experimental/kuka_eki_hw_interface/include/**",
+        "/home/composites/dev/catkin_ws/src/kuka_experimental/kuka_rsi_hw_interface/include/**",
+        "/home/composites/dev/catkin_ws/src/small_robot_tpee_arm_ikfast_plugin/include/**",
+        "/home/composites/dev/catkin_ws/src/orbital_ros/small_robot_tpee_moveit_config/include/**",
+        "/home/composites/dev/catkin_ws/src/tool_point_calibration/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
