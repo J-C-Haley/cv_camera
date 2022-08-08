@@ -33,6 +33,9 @@ add_executable(cv_camera_node src/cv_camera_node.cpp)
 add_dependencies(cv_camera_node cv_camera)
 add_dependencies(cv_camera_nodelet cv_camera)
 
+add_executable(ir_visualization_node src/ir_visualization_node.cpp)
+add_dependencies(ir_visualization_node cv_camera)
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(cv_camera
   ${catkin_LIBRARIES}
@@ -45,6 +48,11 @@ target_link_libraries(cv_camera_nodelet
   )
 
 target_link_libraries(cv_camera_node
+  ${catkin_LIBRARIES}
+  cv_camera
+  )
+
+target_link_libraries(ir_visualization_node
   ${catkin_LIBRARIES}
   cv_camera
   )

@@ -1,0 +1,5 @@
+<launch>    
+
+    <node pkg="cv_camera" type="ir_visualization_node" name="ir_visualization_node"/>
+
+</launch>
