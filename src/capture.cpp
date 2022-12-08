@@ -20,7 +20,9 @@ Capture::Capture(ros::NodeHandle &node, const std::string &topic_name,
       frame_id_(frame_id),
       info_manager_(node_, camera_name),
       capture_delay_(ros::Duration(node_.param("capture_delay", 0.0))),
-      publish_viz_(node_.param("pub_vizualization", true))
+      publish_viz_(node_.param("pub_vizualization", true)),
+      publish_cal_(node_.param("pub_calibration", false)),
+      invert_cal_(node_.param("invert_calibration", false))
 {
 }
 
@@ -89,6 +91,7 @@ void Capture::open(int32_t device_id)
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
+  if (publish_cal_){pub_cal_ = it_.advertiseCamera(topic_name_+"_cal", buffer_size_);}
 
   loadCameraInfo();
 }
@@ -135,6 +138,7 @@ void Capture::open(const std::string &device_sn)
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
+  if (publish_cal_){pub_cal_ = it_.advertiseCamera(topic_name_+"_cal", buffer_size_);}
 
   loadCameraInfo();
 }
@@ -155,6 +159,7 @@ void Capture::openFile(const std::string &file_path)
   }
   pub_ = it_.advertiseCamera(topic_name_, buffer_size_);
   if (publish_viz_){pub_viz_ = it_.advertiseCamera(topic_name_+"_viz", buffer_size_);}
+  if (publish_cal_){pub_cal_ = it_.advertiseCamera(topic_name_+"_cal", buffer_size_);}
 
   std::string url;
   if (node_.getParam("camera_info_url", url))
@@ -238,6 +243,24 @@ bool Capture::capture()
       cv::line(bridge_viz_.image, cv::Point(ptx, pty + 5), cv::Point(ptx, pty + 2), cvScalar(117,79,142), 1);
 
     }
+
+    if (publish_cal_)
+    {
+      // Make an image useful for calibrating the camera
+      cv_bridge::CvImage tmpcal_;
+      cv::normalize(bridge_.image, bridge_cal_.image, 0, 65535, cv::NORM_MINMAX);
+      bridge_cal_.image.convertTo(bridge_cal_.image,CV_8UC1,1/255.0); 
+      if(invert_cal_){
+        cv::bitwise_not(bridge_cal_.image, bridge_cal_.image);
+      }
+      
+      bridge_cal_.encoding = enc::MONO8;
+      bridge_cal_.header.stamp = stamp;
+      bridge_cal_.header.frame_id = frame_id_;
+      
+      info_cal_ = info_;
+
+    }
     ros::spinOnce();
 
     return true;
@@ -250,6 +273,9 @@ void Capture::publish()
   pub_.publish(*getImageMsgPtr(), info_);
   if(publish_viz_){
     pub_viz_.publish(*getImageVizMsgPtr(), info_viz_);
+  }
+  if(publish_cal_){
+    pub_cal_.publish(*getImageCalMsgPtr(), info_cal_);
   }
 }
 

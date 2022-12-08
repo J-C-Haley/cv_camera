@@ -145,6 +145,18 @@ public:
   }
 
   /**
+   * @brief accessor of ROS Image calibration message.
+   *
+   * you have to call capture() before call this.
+   *
+   * @return message pointer.
+   */
+  inline const sensor_msgs::ImagePtr getImageCalMsgPtr() const
+  {
+    return bridge_cal_.toImageMsg();
+  }
+
+  /**
    * @brief try capture image width
    * @return true if success
    */
@@ -235,9 +247,19 @@ private:
   image_transport::CameraPublisher pub_viz_;
 
   /**
+   * @brief image publisher for visualization
+   */
+  image_transport::CameraPublisher pub_cal_;
+
+  /**
    * @brief this stores last visualization image
    */
   cv_bridge::CvImage bridge_viz_;
+
+  /**
+   * @brief this stores last calibration image
+   */
+  cv_bridge::CvImage bridge_cal_;
 
   /**
    * @brief this stores info about visualization image
@@ -245,6 +267,12 @@ private:
    * currently this has image size (width/height) only.
    */
   sensor_msgs::CameraInfo info_viz_;
+
+  /** @brief this stores info about the calibration image
+   *
+   * currently this has image size (width/height) only.
+   */
+  sensor_msgs::CameraInfo info_cal_;
 
   std::string clicktopic = topic_name_+"_viz_mouse_left";
   ros::Subscriber clicksub = node_.subscribe(clicktopic, 10, &Capture::vizClickCallback, this);
@@ -264,6 +292,16 @@ private:
    * @brief publish_viz_ param value
    */
   bool publish_viz_;
+
+  /**
+   * @brief publish_cal_ param value
+   */
+  bool publish_cal_;
+
+  /**
+   * @brief invert_cal_ param value
+   */
+  bool invert_cal_;
 
   int ptx = 0; 
   int pty = 0;
