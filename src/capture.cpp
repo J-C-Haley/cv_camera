@@ -230,7 +230,7 @@ bool Capture::capture()
       info_viz_ = info_;
 
       // Publish temperature at picked point
-      int16_t temp_mk = bridge_.image.at<int16_t>(pty,ptx);
+      uint16_t temp_mk = bridge_.image.at<uint16_t>(pty,ptx);
       sensor_msgs::Temperature tempmsg;
       tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 271.15;
       tempmsg.header.stamp = stamp;
