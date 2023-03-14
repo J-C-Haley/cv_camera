@@ -12,6 +12,7 @@
 class ImageConverter
 {
   ros::NodeHandle nh_;
+  // ros::NodeHandle private_node_("~");
   image_transport::ImageTransport it_;
   image_transport::Subscriber image_sub_;
   image_transport::Publisher image_pub_;
@@ -19,14 +20,23 @@ class ImageConverter
 //   cv::Mat imageEq = cv::Mat(480, 640, CV_8UC1, 1);
 cv::Mat image32;
 cv::Mat imageEq;
-
+// XXX doesnt work yet not getting param
 public:
   ImageConverter() : it_(nh_)
   {
+    std::string image_topic_;
+    if (!nh_.getParam("image_topic", image_topic_))
+    {
+      image_topic_ = "cv_camera/image_raw";
+    }
+    ROS_INFO("XXXXXXXXXXXXXXXXXXx");
+    ROS_INFO(image_topic_.c_str());
+    std::string viz_topic_ = image_topic_ + "_viz";
+
     // Subscrive to input video feed and publish output video feed
-    image_sub_ = it_.subscribe("cv_camera/image_raw", 1,
+    image_sub_ = it_.subscribe(image_topic_, 1,
       &ImageConverter::imageCb, this);
-    image_pub_ = it_.advertise("cv_camera/image_viz", 1);
+    image_pub_ = it_.advertise(viz_topic_, 1);
 
     // cv::namedWindow(OPENCV_WINDOW);
   }

@@ -103,7 +103,7 @@ void Capture::open(const std::string &device_sn)
   int device_open_id;
   std::string result, current_line, device_num;
 
-  for(int i = 0; i < 100; i++){
+  for(int i = 0; i < 30; i++){
   std::string cmdstr = std::string("udevadm info --name=/dev/video") + std::to_string(i);
   const char* cmd = cmdstr.c_str();
   std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
