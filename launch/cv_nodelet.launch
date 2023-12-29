@@ -9,6 +9,8 @@
     <param name="~cv_cap_prop_format" value="-1"/>
     <param name="~cv_cap_prop_convert_rgb" value="0"/>
     <param name="~pub_vizualization" value="true"/>
+    <param name="~pub_calibration" value="false"/>
+    <param name="~invert_calibration" value="false"/>
     <node pkg="nodelet" type="nodelet" name="cv_camera" args="load cv_camera/CvCameraNodelet $(arg vision_nm)" />
 
     <?ignore
