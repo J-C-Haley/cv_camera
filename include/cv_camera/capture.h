@@ -289,6 +289,16 @@ private:
   ros::Duration capture_delay_;
 
   /**
+   * @brief mirror_horizontal_ param value
+   */
+  bool mirror_horizontal_;
+
+    /**
+   * @brief mirror_vertical_ param value
+   */
+  bool mirror_vertical_;
+
+  /**
    * @brief publish_viz_ param value
    */
   bool publish_viz_;

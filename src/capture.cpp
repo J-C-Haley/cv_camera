@@ -20,6 +20,8 @@ Capture::Capture(ros::NodeHandle &node, const std::string &topic_name,
       frame_id_(frame_id),
       info_manager_(node_, camera_name),
       capture_delay_(ros::Duration(node_.param("capture_delay", 0.0))),
+      mirror_horizontal_(node_.param("mirror_horizontal", false)),
+      mirror_vertical_(node_.param("mirror_vertical", false)),
       publish_viz_(node_.param("pub_vizualization", true)),
       publish_cal_(node_.param("pub_calibration", false)),
       invert_cal_(node_.param("invert_calibration", false))
@@ -176,11 +178,24 @@ bool Capture::capture()
   if (cap_.read(bridge_.image))
   {
     // Trim off lepton metadata
-    int cropheight = bridge_.image.size().height - 2;
-    int cropwidth = bridge_.image.size().width;
-    bridge_.image = bridge_.image(cv::Range(0,cropheight),cv::Range(0,cropwidth));
+    // int cropheight = bridge_.image.size().height - 2;
+    // int cropwidth = bridge_.image.size().width;
+    // bridge_.image = bridge_.image(cv::Range(0,cropheight),cv::Range(0,cropwidth));
 
-    // cv::imwrite("/home/jch/Pictures/testim.tif", bridge_.image);
+    // Mirror
+    if (mirror_horizontal_)
+    {
+      cv_bridge::CvImage tmp_;
+      cv::flip(bridge_.image, tmp_.image, 1);
+      bridge_.image = tmp_.image;
+    }
+
+    if (mirror_vertical_)
+    {
+      cv_bridge::CvImage tmp_;
+      cv::flip(bridge_.image, tmp_.image, 0);
+      bridge_.image = tmp_.image;
+    }
 
     // Construct header
     ros::Time stamp = ros::Time::now() - capture_delay_;

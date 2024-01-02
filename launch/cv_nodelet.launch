@@ -8,6 +8,8 @@
     <param name="~device_sn" value="801c0030-5112-3039-3433-373300000000" />
     <param name="~cv_cap_prop_format" value="-1"/>
     <param name="~cv_cap_prop_convert_rgb" value="0"/>
+    <param name="~mirror_horizontal" value="false"/>
+    <param name="~mirror_vertical" value="false"/>
     <param name="~pub_vizualization" value="true"/>
     <param name="~pub_calibration" value="false"/>
     <param name="~invert_calibration" value="false"/>
