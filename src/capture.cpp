@@ -229,6 +229,21 @@ bool Capture::capture()
     }
     info_.header.stamp = stamp;
     info_.header.frame_id = frame_id_;
+
+    // Get high & low IR intensities
+    double minVal; 
+    double maxVal; 
+    cv::Point minLoc; 
+    cv::Point maxLoc;
+
+    minMaxLoc( bridge_.image, &minVal, &maxVal, &minLoc, &maxLoc );
+    std_msgs::Float64 maxmsg;
+    maxmsg.data = maxVal;
+    pubmax.publish(maxmsg);
+
+    std_msgs::Float64 minmsg;
+    minmsg.data = minVal;
+    pubmin.publish(minmsg);
     
     if (publish_viz_)
     {

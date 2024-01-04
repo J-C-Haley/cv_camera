@@ -9,6 +9,7 @@
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
+#include "std_msgs/Float64.h"
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/Temperature.h>
@@ -277,6 +278,8 @@ private:
   std::string clicktopic = topic_name_+"_viz_mouse_left";
   ros::Subscriber clicksub = node_.subscribe(clicktopic, 10, &Capture::vizClickCallback, this);
   ros::Publisher pointtemp = node_.advertise<sensor_msgs::Temperature>("Temperature", 100);
+  ros::Publisher pubmax = node_.advertise<std_msgs::Float64>("max", 10);
+  ros::Publisher pubmin = node_.advertise<std_msgs::Float64>("min", 10);
 
   /**
    * @brief rescale_camera_info param value
