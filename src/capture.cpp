@@ -283,6 +283,8 @@ bool Capture::capture()
       if(invert_cal_){
         cv::bitwise_not(bridge_cal_.image, bridge_cal_.image);
       }
+      // cv::equalizeHist( bridge_cal_.image, bridge_cal_.image );
+      cv::GaussianBlur( bridge_cal_.image, bridge_cal_.image, cv::Size( 3, 3 ), 0, 0 );
       
       bridge_cal_.encoding = enc::MONO8;
       bridge_cal_.header.stamp = stamp;
