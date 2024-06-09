@@ -261,10 +261,13 @@ bool Capture::capture()
 
       // Publish temperature at picked point
       uint16_t temp_mk = bridge_.image.at<uint16_t>(pty,ptx);
-      sensor_msgs::Temperature tempmsg;
-      tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 271.15;
-      tempmsg.header.stamp = stamp;
-      pointtemp.publish(tempmsg);
+      std_msgs::Float64 intensitymsg;
+      intensitymsg.data = static_cast< float >( temp_mk );
+      pickedpoint.publish(intensitymsg);
+      // sensor_msgs::Temperature tempmsg;
+      // tempmsg.temperature = static_cast< float >( temp_mk ) / 100 - 271.15;
+      // tempmsg.header.stamp = stamp;
+      // pointtemp.publish(tempmsg);
 
       // Draw crosshair
       cv::line(bridge_viz_.image, cv::Point(ptx - 5, pty), cv::Point(ptx - 2, pty), cvScalar(117,79,142), 1);

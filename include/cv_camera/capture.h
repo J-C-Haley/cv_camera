@@ -277,7 +277,8 @@ private:
 
   std::string clicktopic = topic_name_+"_viz_mouse_left";
   ros::Subscriber clicksub = node_.subscribe(clicktopic, 10, &Capture::vizClickCallback, this);
-  ros::Publisher pointtemp = node_.advertise<sensor_msgs::Temperature>("Temperature", 100);
+  ros::Publisher pickedpoint = node_.advertise<std_msgs::Float64>("pick_point_intensity", 10);
+  // ros::Publisher pointtemp = node_.advertise<sensor_msgs::Temperature>("Temperature", 100);
   ros::Publisher pubmax = node_.advertise<std_msgs::Float64>("max", 10);
   ros::Publisher pubmin = node_.advertise<std_msgs::Float64>("min", 10);
 
