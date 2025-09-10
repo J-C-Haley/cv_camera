@@ -280,14 +280,31 @@ bool Capture::capture()
     if (publish_cal_)
     {
       // Make an image useful for calibrating the camera
-      cv_bridge::CvImage tmpcal_;
+
+      // First apply CLAHE
+      // cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE(80,cv::Size(32,32));
+      // // clahe->setClipLimit(4);
+      // // clahe->setTilesGridSize(4);
+      // cv_bridge::CvImage clahe_img;
+      // clahe->apply(bridge_.image,bridge_.image);
+      
+
+      // Next use Difference of Gaussians DoG
+      // cv_bridge::CvImage s0;
+      // cv_bridge::CvImage s1;
+      // cv_bridge::CvImage s2;
+      // GaussianBlur(bridge_.image,s0.image,cv::Size(21,21),0,0);
+      // GaussianBlur(bridge_.image,s1.image,cv::Size(25,25),0,0);
+      // bridge_.image = s0.image - s1.image;
+      // // cv::normalize(s2,bridge_cal_.image,0,255,cv::NORM_MINMAX,cv::CV_8U)
+
       cv::normalize(bridge_.image, bridge_cal_.image, 0, 65535, cv::NORM_MINMAX);
       bridge_cal_.image.convertTo(bridge_cal_.image,CV_8UC1,1/255.0); 
       if(invert_cal_){
         cv::bitwise_not(bridge_cal_.image, bridge_cal_.image);
       }
       // cv::equalizeHist( bridge_cal_.image, bridge_cal_.image );
-      cv::GaussianBlur( bridge_cal_.image, bridge_cal_.image, cv::Size( 3, 3 ), 0, 0 );
+      // cv::GaussianBlur( bridge_cal_.image, bridge_cal_.image, cv::Size( 3, 3 ), 0, 0 );
       
       bridge_cal_.encoding = enc::MONO8;
       bridge_cal_.header.stamp = stamp;
